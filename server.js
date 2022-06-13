@@ -5,15 +5,20 @@ const { v4: uuidv4 } = require("uuid");
 const twilio = require("twilio");
 const { disconnect } = require("process");
 
-// const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5002;
 const app = express();
+
 const httpServer = http.createServer(app);
 app.use(app.router);
 app.use(cors())
-// app.use(express.static(path.join(__dirname, 'build')))
-// app.get('/*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'))
-// })
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
+  console.log('Press Ctrl+C to quit.');
+});
+app.use(express.static(path.join(__dirname, 'build')))
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'))
+})
 let connectedUsers = [];
 let rooms = [];
 
@@ -34,7 +39,7 @@ app.get("/api/room-exists/:roomId", (req, res) => {
 
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3000/",
     methods: ["GET", "POST"],
   },
 });

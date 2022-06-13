@@ -8,21 +8,8 @@ const { disconnect } = require("process");
 // const PORT = process.env.PORT || 5002;
 const app = express();
 const httpServer = http.createServer(app);
-var allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-
-  // intercept OPTIONS method
-  if ('OPTIONS' == req.method) {
-    res.send(200);
-  }
-  else {
-    next();
-  }
-}
 app.use(app.router);
-app.use(allowCrossDomain)
+app.use(cors())
 // app.use(express.static(path.join(__dirname, 'build')))
 // app.get('/*', (req, res) => {
 //   res.sendFile(path.join(__dirname, 'build', 'index.html'))
@@ -47,7 +34,7 @@ app.get("/api/room-exists/:roomId", (req, res) => {
 
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "*",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
   },
 });

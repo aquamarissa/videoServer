@@ -9,7 +9,9 @@ const { disconnect } = require("process");
 const app = express();
 const httpServer = http.createServer(app);
 
-app.use(cors());
+app.use(cors({
+  origin: '*'
+}));
 // app.use(express.static(path.join(__dirname, 'build')))
 // app.get('/*', (req, res) => {
 //   res.sendFile(path.join(__dirname, 'build', 'index.html'))

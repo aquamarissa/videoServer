@@ -1,24 +1,18 @@
 const express = require("express");
 const http = require("http");
-const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
+const cors = require("cors");
 const twilio = require("twilio");
 const { disconnect } = require("process");
-
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5003;
 const app = express();
+const server = http.createServer(app);
 
-const httpServer = http.createServer(app);
-app.use(app.router);
-app.use(cors())
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-  console.log('Press Ctrl+C to quit.');
-});
-app.use(express.static(path.join(__dirname, 'build')))
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'))
-})
+app.use(cors());
+// app.use(express.static(path.join(__dirname, 'build')))
+// app.get('/*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'))
+// })
 let connectedUsers = [];
 let rooms = [];
 
@@ -37,9 +31,10 @@ app.get("/api/room-exists/:roomId", (req, res) => {
   }
 });
 
-const io = require("socket.io")(httpServer, {
+
+const io = require("socket.io")(server, {
   cors: {
-    origin: "http://localhost:3000/",
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
@@ -186,8 +181,11 @@ const initializeConnectionHandler = (data, socket) => {
   io.to(connUserSocketId).emit("conn-init", initData);
 };
 
+
 if ( process.env.NODE_ENV == 'production' ) {
       app.use(express.static("/build"))
 }
 
-httpServer.listen(5002, () => "http server runs")
+server.listen(PORT, () => {
+  console.log(`Server is listening on ${PORT}`);
+});
